@@ -34,9 +34,11 @@ def rebalance(prices, holdings, allocation):
             for symbol, amount in holdings.items()
             }
     holdings_value_sum = sum(holdings_value.values())
-    transactions = []
+    t = {}
     for symbol, amount in holdings_value.items():
-        change = allocation[symbol] * holdings_value_sum - amount
-        if change != 0:
-            transactions.append((symbol, change))
-    return transactions
+        if prices[symbol] > 0:
+            t[symbol] = allocation[symbol] * holdings_value_sum / prices[symbol]
+        else:
+            t[symbol] = 0
+
+    return t
