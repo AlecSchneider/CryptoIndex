@@ -55,50 +55,72 @@ def get_lot_size(filters):
             return f
 
 
-def main():
-    currency = "BTC"
-    non_trading = [currency, "USDT"]
-    client = Client(api_key, api_secret)
-    coinmarketcap = Market()
-    caps = [
-            {"symbol": coin["symbol"], "value": coin["market_cap_usd"]}
-            for coin in coinmarketcap.ticker(start=0, limit=100)
-            ]
-
-    pp = pprint.PrettyPrinter(indent=4)
-    holdings = {
+def get_holdings(client):
+    return {
             coin["asset"]: float(coin["free"]) + float(coin["locked"])
             for coin in client.get_account()['balances']
             if float(coin["free"]) + float(coin["locked"]) > 0
-            }
+    }
+
+
+def get_prices(client, currency):
     prices = {currency: 1}
     for coin in client.get_all_tickers():
         if currency not in coin["symbol"]:
             continue
         symbol = coin["symbol"].replace(currency, "")
         prices[symbol] = float(coin["price"])
+    return prices
+
+
+def get_market_caps(top=100):
+    coinmarketcap = Market()
+    caps = [
+            {"symbol": coin["symbol"], "value": coin["market_cap_usd"]}
+            for coin in coinmarketcap.ticker(start=0, limit=top)
+            ]
+    return caps
+
+
+def calc_portfolio_value(prices, holdings):
+    return sum([
+        amount * prices[symbol]
+        if symbol in prices else amount
+        for symbol, amount in holdings.items()
+    ])
+
+
+def main():
+    currency = "BTC"
+    non_trading = ["USDT"]
+    client = Client(api_key, api_secret)
+
+    caps = get_market_caps()
+    holdings = get_holdings(client)
+    prices = get_prices(client, currency)
 
     for coin in caps:
         if coin["symbol"] not in prices or coin["symbol"] in non_trading:
             caps.remove(coin)
 
+    allocation = calc_allocation(caps, market_cap_20)
+    value = calc_portfolio_value(prices, holdings)
 
+    # Pretty print some of this
+    pp = pprint.PrettyPrinter(indent=4)
     pp.pprint(holdings)
     pp.pprint(prices)
     pp.pprint(caps[:20])
-    allocation = calc_allocation(caps, market_cap_20)
     pp.pprint(allocation)
-    value = sum([
-        amount * prices[symbol]
-        if symbol in prices else amount
-        for symbol, amount in holdings.items()
-        ])
     print(value)
+
     trans = rebalance(prices, holdings, allocation, value * 0.95)
     trans.sort(key=lambda tup: tup[1])
     pp.pprint(trans)
+
     ans = input("Are you sure you wanna do that? Y/n: ")
     if ans != 'Y':
+        print("No transactions have been executed")
         return
 
     for s, amount in trans:
@@ -110,7 +132,6 @@ def main():
         if amount < 0:
             order = sell(client, s+currency, -amount)
             print(order)
-
 
 
 if __name__ == "__main__":
