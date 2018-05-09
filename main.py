@@ -114,7 +114,7 @@ def main():
     pp.pprint(allocation)
     print(value)
 
-    trans = rebalance(prices, holdings, allocation, value * 0.95)
+    trans = rebalance(prices, holdings, allocation, value)
     trans.sort(key=lambda tup: tup[1])
     pp.pprint(trans)
 
