@@ -1,6 +1,6 @@
 from binance.client import Client
 from coinmarketcap import Market
-from keys import api_key, api_secret
+from components.binance.keys import api_key, api_secret
 
 
 def get_holdings(client):
@@ -50,12 +50,18 @@ def print_portfolio(allocation):
         print(s, ":", a, "%")
 
 
-currency = "BTC"
-client = Client(api_key, api_secret)
-holdings = get_holdings(client)
-prices = get_prices(client, currency)
-value = calc_portfolio_value(prices, holdings)
-allocation = calc_allocation(value, prices, holdings)
+def main():
+    currency = "BTC"
+    client = Client(api_key, api_secret)
+    holdings = get_holdings(client)
+    prices = get_prices(client, currency)
+    value = calc_portfolio_value(prices, holdings)
+    allocation = calc_allocation(value, prices, holdings)
 
-print(value * prices["USDT"], "$")
-print_portfolio(allocation)
+    print(value * prices["USDT"], "$")
+    print_portfolio(allocation)
+
+
+if __name__ == "__main__":
+    # execute only if run as a script
+    main()
