@@ -1,4 +1,4 @@
-from coinmarketcap import CoinMarketCapFetcher
+from cryptohist import CoinMarketCapFetcher
 import datetime as dt
 
 fetcher = CoinMarketCapFetcher(start=dt.datetime(2013, 4, 28), end=dt.datetime.today())

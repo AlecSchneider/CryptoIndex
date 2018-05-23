@@ -1,10 +1,10 @@
 import pprint
 from binance.client import Client
-from components.binance.index import calc_allocation, rebalance
-from components.binance.trading import buy, sell
-from components.binance.portfolio import get_market_caps, get_holdings, get_prices, calc_portfolio_value
-from components.binance.keys import api_key, api_secret
-from components.binance.index_config import market_cap_20
+from index import calc_allocation, rebalance
+from trading import buy, sell
+from portfolio import get_market_caps, get_holdings, get_prices, calc_portfolio_value
+from keys import api_key, api_secret
+from index_config import market_cap_20
 
 
 def main():
