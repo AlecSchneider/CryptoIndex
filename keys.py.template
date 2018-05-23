@@ -1,0 +1,3 @@
+# rename file to keys.py
+api_secret = "Add secret api key here"
+api_key = "Add api key here"
