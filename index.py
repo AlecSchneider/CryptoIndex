@@ -26,8 +26,12 @@ def calc_allocation(coins, config):
 
 
 def rebalance(prices, holdings, allocation, value):
-    holdings.update({symbol: 0 for symbol in allocation.keys() - holdings.keys()})
-    allocation.update({symbol: 0 for symbol in holdings.keys() - allocation.keys()})
+    holdings.update(
+            {symbol: 0 for symbol in allocation.keys() - holdings.keys()}
+        )
+    allocation.update(
+            {symbol: 0 for symbol in holdings.keys() - allocation.keys()}
+            )
     holdings_value = {
             symbol: prices[symbol] * amount
             for symbol, amount in holdings.items()
@@ -35,7 +39,10 @@ def rebalance(prices, holdings, allocation, value):
     transactions = []
     for symbol, amount in holdings_value.items():
         if prices[symbol] > 0:
-            transactions.append((symbol, (allocation[symbol] * value - amount) / prices[symbol]))
+            transactions.append((
+                symbol,
+                (allocation[symbol] * value - amount) / prices[symbol]
+                ))
         else:
             transactions.append((symbol, 0))
 
