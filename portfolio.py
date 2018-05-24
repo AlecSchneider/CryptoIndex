@@ -21,10 +21,13 @@ def get_prices(client, currency):
 
 
 def get_market_caps(top=100):
-    coinmarketcap = Market()
+    coins = Market().ticker(start=0, limit=top)["data"].values()
     caps = [
-            {"symbol": coin["symbol"], "value": coin["market_cap_usd"]}
-            for coin in coinmarketcap.ticker(start=0, limit=top)
+            {
+                "symbol": coin["symbol"],
+                "value": coin["quotes"]["USD"]["market_cap"],
+            }
+            for coin in coins
             ]
     return caps
 

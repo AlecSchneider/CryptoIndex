@@ -1,2 +1,2 @@
 python-binance
-coinmarketcap
+coinmarketcap>5.0.0
